@@ -9,6 +9,7 @@ using namespace std;
 //Prototipi funzioni, servono? Non mi sembra ci sia nella consegna, nel dubbio li metto
 int numero_random();
 void frequenza_numeri(int v[]);
+
 int main(){
     // valore del seed
 	srand(time(0));
@@ -164,7 +165,9 @@ int main(){
 }
 //Punto 2: funzione per la generazione dei numeri random
 int numero_random(){
-    return rand() % (6 - 1 + 1) + 1;//(max - min + 1) + min
+    int num_cas = rand() % (6 - 1 + 1) + 1;//(max - min + 1) + min
+
+    return num_cas;
 }
 
 /*

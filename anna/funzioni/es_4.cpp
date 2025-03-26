@@ -13,21 +13,51 @@ using namespace std;
 int function(int a, int b, int c);
 
 int main(){
+    cout << "la differenza tra min e max e': " << function(2,6,3) << endl;
     
 	return 0;
 }
 
 int function(int a, int b, int c){
-    int differenza = 0;
-
-    if(a >= b && a >= c){
-        //a maggiore
+    int differenza = 0, maggiore = 0, minore = 0;
+    
+    //Maggiore
+    if(a >= b){
+        if(a >= c){
+            maggiore = a;
+        }
+        else{
+            maggiore = c;
+        }
     }
     else{
         if(b >= c){
-            //b è maggiore di 
+            maggiore = b;
+        }
+        else{
+            maggiore = c;
         }
     }
+
+    //Minore
+    if(a <= b){
+        if(a <= c){
+            minore = a;
+        }
+        else{
+            minore = c;
+        }
+    }
+    else{
+        if(b <= c){
+            minore = b;
+        }
+        else{
+            minore = c;
+        }
+    }
+
+    differenza = maggiore - minore;
 
     return differenza;
 }
