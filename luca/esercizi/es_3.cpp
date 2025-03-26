@@ -3,6 +3,9 @@ Creare una funzione che restituisce se un numero intero ha almeno 3 divisori.
 Creare poi un programma che dica se un numero passato dall’utente e il più grande 
 numero intero più piccolo del suo quadrato hanno almeno tre 
 divisori.
+
+g++ es_3.cpp -o es_3
+./es_3
 */
 
 #include <iostream>
@@ -28,7 +31,7 @@ int main() {
     int num = 21;
     
     cout << "Inserisci un numero intero: ";
-    //cin >> num;
+    cin >> num;
     
     int quadrato = num * num;
     int piuGrandeMinoreDelQuadrato = quadrato - 1;
