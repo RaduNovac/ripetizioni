@@ -25,10 +25,10 @@ bool haAlmenoTreDivisori(int n) {
 }
 
 int main() {
-    int num;
+    int num = 21;
     
     cout << "Inserisci un numero intero: ";
-    cin >> num;
+    //cin >> num;
     
     int quadrato = num * num;
     int piuGrandeMinoreDelQuadrato = quadrato - 1;
