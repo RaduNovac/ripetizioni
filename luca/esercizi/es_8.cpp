@@ -30,10 +30,10 @@ bool vettore_pieno(int v[]){
 
 void riempi_vettore(int v[]){
     while(vettore_pieno(v) == false){
-        int posizione = genera_num_casuale(1, 100);
+        int posizione = genera_num_casuale(0, 99);
         int numero = genera_num_casuale(1,1000);
         v[posizione] = numero;
-        cout << "posizione: " << posizione << "; numero: " << numero << endl;
+        //cout << "posizione: " << posizione << "; numero: " << numero << endl;
     }
 }
 
