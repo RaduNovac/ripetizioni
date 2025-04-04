@@ -4,178 +4,243 @@
 
 using namespace std;
 
-// Costanti
-const int NUM_GIORNI = 10;   // numero di giorni di mercato
-const int THRESHOLD  = 15;    // soglia per considerare le vendite elevate (in kg)
+// Costanti per dimensioni degli array
+#define NUM_VOTI 20     // numero di voti per ogni studente
+#define NUM_STUDENTI 3  // numero di studenti
 
-// *******************************************************************
-// Funzione per generare casualmente il quantitativo di vendita
-// Genera un numero casuale compreso tra 0 e 20 (in kg)
-// *******************************************************************
-int generaQuantita() {
-    return rand() % 21; // restituisce un numero tra 0 e 20
+// Funzione che genera un voto casuale nell'intervallo 18-31
+// 31 rappresenta il voto "30 con lode".
+int generaVoto() {
+    // rand() % (max - min + 1) + min
+    return rand() % (31 - 18 + 1) + 18;
 }
 
-// *******************************************************************
-// Funzione per calcolare la somma degli elementi di un array
-// Parametri: arr[] è l'array, n è il numero di elementi
-// *******************************************************************
-int sommaArray(int arr[], int n) {
-    int somma = 0;
+// Funzione che calcola la media dei voti contenuti in un array
+// Parametri: voti[] è l'array dei voti, n è il numero di voti.
+double calcolaMedia(int voti[], int n) {
+    double somma = 0;
     for (int i = 0; i < n; i++) {
-        somma += arr[i];
+        somma += voti[i];
     }
-    return somma;
+    return somma / n;
 }
 
-// *******************************************************************
-// Funzione per contare quanti giorni in cui il quantitativo supera una certa soglia
-// Parametri: arr[] è l'array, n è il numero di elementi, soglia è il valore da superare
-// *******************************************************************
-int contaSuperiore(int arr[], int n, int soglia) {
-    int count = 0;
-    for (int i = 0; i < n; i++) {
-        if (arr[i] > soglia)
-            count++;
+// Funzione che calcola la frequenza dei voti da 18 a 30 e il numero di lodi.
+// Parametri:
+// - voti[]: array dei voti
+// - n: numero di voti nell'array
+// - freq[]: array di dimensione 13, dove freq[0] conta il numero di 18, ..., freq[12] conta il numero di 30
+// - countLodi: variabile in cui verrà salvato il numero di voti "con lode" (cioè i voti pari a 31)
+void calcolaFrequenza(int voti[], int n, int freq[], int &countLodi) {
+    // Inizializziamo il vettore delle frequenze a zero per tutti i voti da 18 a 30
+    for (int i = 0; i < 13; i++) {
+        freq[i] = 0;
     }
-    return count;
+    countLodi = 0;
+    
+    for (int i = 0; i < n; i++) {
+        if (voti[i] == 31) {
+            // 31 rappresenta il voto "30 con lode"
+            countLodi++;
+        } else if (voti[i] >= 18 && voti[i] <= 30) {
+            // Il voto 18 corrisponde all'indice 0, 19 all'indice 1, e così via...
+            freq[voti[i] - 18]++;
+        }
+    }
 }
 
-// *******************************************************************
-// Funzione per calcolare la media giornaliera delle vendite per un agricoltore
-// Calcola la media considerando le vendite di tutti i prodotti in ogni giorno
-// *******************************************************************
-double calcolaMediaGiornaliera(int frutta[], int verdura[], int cereali[], int n) {
-    int totale = 0;
-    for (int i = 0; i < n; i++) {
-        totale += frutta[i] + verdura[i] + cereali[i];
+// Funzione che trova il voto minimo e il voto massimo in un array
+// Parametri:
+// - voti[]: array dei voti
+// - n: numero di voti
+// - min: variabile per salvare il voto minimo trovato (output)
+// - max: variabile per salvare il voto massimo trovato (output)
+void trovaMinMax(int voti[], int n, int &min, int &max) {
+    min = voti[0];
+    max = voti[0];
+    
+    for (int i = 1; i < n; i++) {
+        if (voti[i] < min)
+            min = voti[i];
+        if (voti[i] > max)
+            max = voti[i];
     }
-    // Per ottenere un risultato in virgola mobile basta dividere per 1.0
-    return (1.0 * totale) / n;
 }
 
-// *******************************************************************
-// Funzione per stampare i dati giornalieri delle vendite di un agricoltore
-// Ogni giorno vengono stampate le vendite di frutta, verdura e cereali
-// *******************************************************************
-void stampaVenditeGiornaliere(int frutta[], int verdura[], int cereali[], int n) {
+// Funzione per stampare i voti contenuti in un array.
+// Se il voto è 31, lo stampiamo come "30L" per indicare la lode.
+void stampaVoti(int voti[], int n) {
     for (int i = 0; i < n; i++) {
-        cout << "Giorno " << i + 1 << ": ";
-        cout << "Frutta: " << frutta[i] << " kg, ";
-        cout << "Verdura: " << verdura[i] << " kg, ";
-        cout << "Cereali: " << cereali[i] << " kg" << endl;
+        if (voti[i] == 31)
+            cout << "30L ";
+        else
+            cout << voti[i] << " ";
     }
+    cout << endl;
 }
 
 int main() {
-    // Inizializziamo il seme per la generazione dei numeri casuali
+    // Inizializzo il seme per la generazione dei numeri casuali
     srand(time(0));
     
-    // Per ogni agricoltore, creiamo tre array (uno per ogni prodotto)
-    // Agricoltore 1
-    int frutta1[NUM_GIORNI], verdura1[NUM_GIORNI], cereali1[NUM_GIORNI];
-    // Agricoltore 2
-    int frutta2[NUM_GIORNI], verdura2[NUM_GIORNI], cereali2[NUM_GIORNI];
-    // Agricoltore 3
-    int frutta3[NUM_GIORNI], verdura3[NUM_GIORNI], cereali3[NUM_GIORNI];
+    // Creo tre array per tre studenti, ognuno con NUM_VOTI voti
+    int studente1[NUM_VOTI];
+    int studente2[NUM_VOTI];
+    int studente3[NUM_VOTI];
     
-    // Generazione dei dati casuali per ogni agricoltore, per 10 giorni
-    for (int i = 0; i < NUM_GIORNI; i++) {
-        // Agricoltore 1
-        frutta1[i]   = generaQuantita();
-        verdura1[i]  = generaQuantita();
-        cereali1[i]  = generaQuantita();
-        
-        // Agricoltore 2
-        frutta2[i]   = generaQuantita();
-        verdura2[i]  = generaQuantita();
-        cereali2[i]  = generaQuantita();
-        
-        // Agricoltore 3
-        frutta3[i]   = generaQuantita();
-        verdura3[i]  = generaQuantita();
-        cereali3[i]  = generaQuantita();
+    // Genero i voti per ciascuno studente
+    for (int i = 0; i < NUM_VOTI; i++) {
+        studente1[i] = generaVoto();
+        studente2[i] = generaVoto();
+        studente3[i] = generaVoto();
     }
     
-    // Elaborazione ed output per ogni agricoltore
     
-    // ---- Agricoltore 1 ----
-    cout << "----- Agricoltore 1 -----" << endl;
-    cout << "\nVendite giornaliere:" << endl;
-    stampaVenditeGiornaliere(frutta1, verdura1, cereali1, NUM_GIORNI);
+    // studente 1
     
-    // Totale venduto per ogni prodotto
-    int totFrutta1  = sommaArray(frutta1, NUM_GIORNI);
-    int totVerdura1 = sommaArray(verdura1, NUM_GIORNI);
-    int totCereali1 = sommaArray(cereali1, NUM_GIORNI);
-    cout << "\nTotale venduto:" << endl;
-    cout << "Frutta: " << totFrutta1 << " kg" << endl;
-    cout << "Verdura: " << totVerdura1 << " kg" << endl;
-    cout << "Cereali: " << totCereali1 << " kg" << endl;
-    
-    // Media giornaliera (somma delle vendite di tutti i prodotti per giorno)
-    double media1 = calcolaMediaGiornaliera(frutta1, verdura1, cereali1, NUM_GIORNI);
-    cout << "\nMedia giornaliera: " << media1 << " kg" << endl;
-    
-    // Frequenza dei giorni in cui le vendite superano la soglia per ciascun prodotto
-    int freqFrutta1  = contaSuperiore(frutta1, NUM_GIORNI, THRESHOLD);
-    int freqVerdura1 = contaSuperiore(verdura1, NUM_GIORNI, THRESHOLD);
-    int freqCereali1 = contaSuperiore(cereali1, NUM_GIORNI, THRESHOLD);
-    cout << "\nGiorni con vendite superiori a " << THRESHOLD << " kg:" << endl;
-    cout << "Frutta: " << freqFrutta1 << " giorni" << endl;
-    cout << "Verdura: " << freqVerdura1 << " giorni" << endl;
-    cout << "Cereali: " << freqCereali1 << " giorni" << endl;
-    
-    // ---- Agricoltore 2 ----
-    cout << "\n-----------------------------" << endl;
-    cout << "----- Agricoltore 2 -----" << endl;
-    cout << "\nVendite giornaliere:" << endl;
-    stampaVenditeGiornaliere(frutta2, verdura2, cereali2, NUM_GIORNI);
-    
-    int totFrutta2  = sommaArray(frutta2, NUM_GIORNI);
-    int totVerdura2 = sommaArray(verdura2, NUM_GIORNI);
-    int totCereali2 = sommaArray(cereali2, NUM_GIORNI);
-    cout << "\nTotale venduto:" << endl;
-    cout << "Frutta: " << totFrutta2 << " kg" << endl;
-    cout << "Verdura: " << totVerdura2 << " kg" << endl;
-    cout << "Cereali: " << totCereali2 << " kg" << endl;
-    
-    double media2 = calcolaMediaGiornaliera(frutta2, verdura2, cereali2, NUM_GIORNI);
-    cout << "\nMedia giornaliera: " << media2 << " kg" << endl;
-    
-    int freqFrutta2  = contaSuperiore(frutta2, NUM_GIORNI, THRESHOLD);
-    int freqVerdura2 = contaSuperiore(verdura2, NUM_GIORNI, THRESHOLD);
-    int freqCereali2 = contaSuperiore(cereali2, NUM_GIORNI, THRESHOLD);
-    cout << "\nGiorni con vendite superiori a " << THRESHOLD << " kg:" << endl;
-    cout << "Frutta: " << freqFrutta2 << " giorni" << endl;
-    cout << "Verdura: " << freqVerdura2 << " giorni" << endl;
-    cout << "Cereali: " << freqCereali2 << " giorni" << endl;
-    
-    // ---- Agricoltore 3 ----
-    cout << "\n-----------------------------" << endl;
-    cout << "----- Agricoltore 3 -----" << endl;
-    cout << "\nVendite giornaliere:" << endl;
-    stampaVenditeGiornaliere(frutta3, verdura3, cereali3, NUM_GIORNI);
-    
-    int totFrutta3  = sommaArray(frutta3, NUM_GIORNI);
-    int totVerdura3 = sommaArray(verdura3, NUM_GIORNI);
-    int totCereali3 = sommaArray(cereali3, NUM_GIORNI);
-    cout << "\nTotale venduto:" << endl;
-    cout << "Frutta: " << totFrutta3 << " kg" << endl;
-    cout << "Verdura: " << totVerdura3 << " kg" << endl;
-    cout << "Cereali: " << totCereali3 << " kg" << endl;
-    
-    double media3 = calcolaMediaGiornaliera(frutta3, verdura3, cereali3, NUM_GIORNI);
-    cout << "\nMedia giornaliera: " << media3 << " kg" << endl;
-    
-    int freqFrutta3  = contaSuperiore(frutta3, NUM_GIORNI, THRESHOLD);
-    int freqVerdura3 = contaSuperiore(verdura3, NUM_GIORNI, THRESHOLD);
-    int freqCereali3 = contaSuperiore(cereali3, NUM_GIORNI, THRESHOLD);
-    cout << "\nGiorni con vendite superiori a " << THRESHOLD << " kg:" << endl;
-    cout << "Frutta: " << freqFrutta3 << " giorni" << endl;
-    cout << "Verdura: " << freqVerdura3 << " giorni" << endl;
-    cout << "Cereali: " << freqCereali3 << " giorni" << endl;
-    
-    cout << "\n-----------------------------" << endl;
+        cout << "==============================" << endl;
+        cout << "Dati per Studente " << 1 << ":" << endl;
+        
+        // Stampa dei voti
+        cout << "Voti: ";
+        stampaVoti(studente1, NUM_VOTI);
+        
+        // Calcolo e stampa della media
+        double media = calcolaMedia(studente1, NUM_VOTI);
+        cout << "Media: " << media << endl;
+        
+        // Calcolo della frequenza dei voti e dei voti con lode
+        int freq[13];      // Array per la frequenza dei voti da 18 a 30
+        int countLodi;     // Contatore per i voti "con lode" (31)
+        calcolaFrequenza(studente1, NUM_VOTI, freq, countLodi);
+        
+        cout << "Frequenza dei voti:" << endl;
+        // Per ogni voto da 18 a 30 stampiamo la frequenza
+        for (int voto = 18; voto <= 30; voto++) {
+            cout << "Voto " << voto << ": " << freq[voto - 18] << " volte" << endl;
+        }
+        cout << "Numero di voti con lode (30L): " << countLodi << endl;
+        
+        // Trovare il voto minimo e il voto massimo
+        int min, max;
+        trovaMinMax(studente1, NUM_VOTI, min, max);
+        
+        // Gestisco la stampa del voto massimo: se è 31, lo rappresento come 30L
+        cout << "Voto minimo: ";
+        if(min == 31){
+		        cout << "30L" << endl;
+        } 
+        else{
+		        cout << min << endl;
+        }
+        
+        cout << "Voto massimo: ";
+        if(max == 31){
+		        cout << "30L" << endl;
+        }
+        else{
+		        cout << max << endl;
+        }
+        
+        cout << "==============================" << endl << endl;
+        
+        
+        
+    // studente 2
+        
+        cout << "==============================" << endl;
+        cout << "Dati per Studente " << 2 << ":" << endl;
+        
+        // Stampa dei voti
+        cout << "Voti: ";
+        stampaVoti(studente2, NUM_VOTI);
+        
+        // Calcolo e stampa della media
+        double media2 = calcolaMedia(studente2, NUM_VOTI);
+        cout << "Media: " << media2 << endl;
+        
+        // Calcolo della frequenza dei voti e dei voti con lode
+        int freq2[13];      // Array per la frequenza dei voti da 18 a 30
+        int countLodi2;     // Contatore per i voti "con lode" (31)
+        calcolaFrequenza(studente2, NUM_VOTI, freq, countLodi2);
+        
+        cout << "Frequenza dei voti:" << endl;
+        // Per ogni voto da 18 a 30 stampiamo la frequenza
+        for (int voto = 18; voto <= 30; voto++) {
+            cout << "Voto " << voto << ": " << freq[voto - 18] << " volte" << endl;
+        }
+        cout << "Numero di voti con lode (30L): " << countLodi << endl;
+        
+        // Trovare il voto minimo e il voto massimo
+        trovaMinMax(studente2, NUM_VOTI, min, max);
+        
+        // Gestisco la stampa del voto massimo: se è 31, lo rappresento come 30L
+        cout << "Voto minimo: ";
+        if(min == 31){
+		        cout << "30L" << endl;
+        } 
+        else{
+		        cout << min << endl;
+        }
+        
+        cout << "Voto massimo: ";
+        if(max == 31){
+		        cout << "30L" << endl;
+        }
+        else{
+		        cout << max << endl;
+        }
+        
+        cout << "==============================" << endl << endl;
+        
+        
+        
+    // studente 3
+        
+        cout << "==============================" << endl;
+        cout << "Dati per Studente " << 3 << ":" << endl;
+        
+        // Stampa dei voti
+        cout << "Voti: ";
+        stampaVoti(studente3, NUM_VOTI);
+        
+        // Calcolo e stampa della media
+        double media3 = calcolaMedia(studente3, NUM_VOTI);
+        cout << "Media: " << media3 << endl;
+        
+        // Calcolo della frequenza dei voti e dei voti con lode
+        int freq3[13];      // Array per la frequenza dei voti da 18 a 30
+        int countLodi3;     // Contatore per i voti "con lode" (31)
+        calcolaFrequenza(studente3, NUM_VOTI, freq3, countLodi3);
+        
+        cout << "Frequenza dei voti:" << endl;
+        // Per ogni voto da 18 a 30 stampiamo la frequenza
+        for (int voto = 18; voto <= 30; voto++) {
+            cout << "Voto " << voto << ": " << freq3[voto - 18] << " volte" << endl;
+        }
+        cout << "Numero di voti con lode (30L): " << countLodi << endl;
+        
+        // Trovare il voto minimo e il voto massimo
+        trovaMinMax(studente3, NUM_VOTI, min, max);
+        
+        // Gestisco la stampa del voto massimo: se è 31, lo rappresento come 30L
+        cout << "Voto minimo: ";
+        if(min == 31){
+		        cout << "30L" << endl;
+        } 
+        else{
+		        cout << min << endl;
+        }
+        
+        cout << "Voto massimo: ";
+        if(max == 31){
+		        cout << "30L" << endl;
+        }
+        else{
+		        cout << max << endl;
+        }
+        
+        cout << "==============================" << endl << endl;
+        
     return 0;
 }
