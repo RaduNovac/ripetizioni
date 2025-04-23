@@ -1,3 +1,8 @@
+/* 
+    g++ -std=c++11 es_2.cpp -o es_2
+
+    ./es_2
+*/
 #include <iostream>
 
 using namespace std;
