@@ -1,16 +1,22 @@
+/* 
+    g++ -std=c++11 es_1.cpp -o es_1
+
+    ./es_1
+*/
+
 #include <iostream>
 #include <cmath>
 
 using namespace std;
 
 // Funzione per verificare se un numero è primo
-bool primo(int numero) {
-    if(numero < 2){//Se è <  2 non è primo per definizione
+bool primo(int n) {
+    if(n < 2){//Se è <  2 non è primo per definizione
         return false;
     }
 
-    for(int i = 2; i <= numero; i++){//parto da 2 e non 1 perché ogni numero intero diviso 1 da resto 0
-        if(numero % i == 0){
+    for(int i = 2; i < n; i++){//parto da 2 e non 1 perché ogni numero intero diviso 1 da resto 0
+        if(n % i == 0){
             return false;
         }
     }
