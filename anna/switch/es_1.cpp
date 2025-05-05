@@ -37,7 +37,7 @@ int main() {
                 do{
                     cout << "\nInserisci 'u' per tornare al menu o qualsiasi altro tasto per continuare: ";
                     cin >> continua;
-										//Se l'utente inserisce u non chiedo i due numeri e torno alla scelta dell'operazione
+					//Se l'utente inserisce u non chiedo i due numeri e torno alla scelta dell'operazione
                     if(continua == 'u') {
                         break; // Torna al menu principale
                     }
@@ -48,7 +48,7 @@ int main() {
                     cout << "Inserisci il secondo numero: ";
                     cin >> num2;
 
-                    switch (sceltaOperazione) {
+                    switch(sceltaOperazione){
                         case '1':
                             risultato = num1 + num2;
                             cout << "Risultato: " << risultato << endl;
@@ -71,7 +71,7 @@ int main() {
                             break;
                     }
 
-                } while (true);//Mi permetto di usare il while true perché uso un break per interrompere il ciclo e il case! Il while(true) va usato con cognizione di causa
+                } while(continua != 'u'/*true*/);//Mi permetto di usare il while true perché uso un break per interrompere il ciclo e il case! Il while(true) va usato con cognizione di causa
                 break;
 
             case 'u':

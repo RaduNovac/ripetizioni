@@ -44,7 +44,7 @@ int main() {
                 cout << "* ";
             }
             // Spazio interno
-            else {
+            else{
                 cout << "  ";
             }
         }

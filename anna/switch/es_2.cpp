@@ -8,7 +8,7 @@ using namespace std;
 /*
 g++ -std=c++11 es_2.cpp -o es_2
 
-Riempire un vettore di 1024 numeri interi compresi tra 1 e 1000.
+Riempire un vettore di 1024 caselle di numeri interi compresi tra 1 e 1000.
 Creare una funzione che divida i numeri pari da quelli dispari, copiandoli in
 due vettori distinti.
 
